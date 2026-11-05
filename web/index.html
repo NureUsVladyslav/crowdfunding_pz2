@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Краудфандинг із поверненням коштів</title>
+  <style>
+    :root {
+      --page: #edf0f3;
+      --surface: #ffffff;
+      --ink: #1b2530;
+      --muted: #5b6874;
+      --line: #d5dbe1;
+      --bar: #17212b;
+      --accent: #0c6a89;
+      --accent-dark: #095571;
+      --info: #0c6a89;   --info-bg: #dcf0f6;
+      --ok: #17703f;     --ok-bg: #def2e6;
+      --warn: #8f5500;   --warn-bg: #fbeed3;
+      --bad: #ab2119;    --bad-bg: #fae3e0;
+      --done: #424e59;   --done-bg: #e4e8ec;
+      --mono: "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font: 15px/1.5 "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+    }
+    h1, h2, h3 { margin: 0; line-height: 1.25; }
+    h2 { font-size: 17px; }
+    h3 { font-size: 16px; }
+    a { color: var(--accent); }
+    button, input { font: inherit; color: inherit; }
+    :focus-visible { outline: 3px solid #f2b600; outline-offset: 2px; }
+
+    .topbar {
+      background: var(--bar);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar h1 { font-size: 19px; font-weight: 600; }
+    .topbar p { margin: 2px 0 0; color: #aeb9c4; font-size: 13px; }
+    .wallet { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+    .addr { font-family: var(--mono); font-size: 13px; }
+    .wallet .addr { color: #fff; }
+
+    .btn {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:hover:not(:disabled) { background: var(--accent-dark); }
+    .btn.secondary { background: transparent; color: var(--accent); }
+    .btn.secondary:hover:not(:disabled) { background: var(--info-bg); }
+    .btn.on-dark { border-color: #6fc3dc; background: transparent; color: #fff; }
+    .btn.on-dark:hover:not(:disabled) { background: #24323f; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn.small { padding: 4px 10px; font-size: 14px; }
+
+    .badge {
+      display: inline-block;
+      padding: 1px 9px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge.info { background: var(--info-bg); color: var(--info); }
+    .badge.ok   { background: var(--ok-bg);   color: var(--ok); }
+    .badge.warn { background: var(--warn-bg); color: var(--warn); }
+    .badge.bad  { background: var(--bad-bg);  color: var(--bad); }
+    .badge.done { background: var(--done-bg); color: var(--done); }
+    .topbar .badge.ok   { background: #1d5a3a; color: #d7f5e3; }
+    .topbar .badge.bad  { background: #6e2a25; color: #ffe0dc; }
+    .topbar .badge.info { background: #24465a; color: #d3eef8; }
+    .topbar .badge.done { background: #36424e; color: #dfe5ea; }
+
+    .banner {
+      margin: 16px 24px 0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--warn);
+      background: var(--warn-bg);
+      color: var(--warn);
+      display: none;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .banner.show { display: flex; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+      gap: 20px;
+      padding: 20px 24px 40px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; padding: 16px; }
+      .topbar, .banner { margin-left: 0; margin-right: 0; }
+      .banner { margin: 12px 16px 0; }
+    }
+    .stack { display: grid; gap: 20px; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .panel > header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .panel .note { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+
+    label { display: block; font-size: 14px; color: var(--muted); margin: 10px 0 4px; }
+    input[type="text"] {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #b9c2cb;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
+    .facts dt { color: var(--muted); }
+    .facts dd { margin: 0; }
+
+    .campaign {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .campaign:first-child { margin-top: 0; }
+    .campaign header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .progress { height: 10px; background: var(--done-bg); border-radius: 999px; overflow: hidden; margin: 6px 0 4px; }
+    .progress > div { height: 100%; background: var(--accent); }
+    .progress.reached > div { background: var(--ok); }
+    .raised { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; flex-wrap: wrap; }
+    .campaign .facts { margin-top: 10px; font-size: 14px; }
+    .campaign .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+    .campaign .amount { width: 130px; }
+
+    .pager { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pager span { color: var(--muted); font-size: 14px; }
+    .empty { margin: 0; color: var(--muted); }
+
+    ul.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    ul.log li {
+      border-left: 4px solid var(--line);
+      padding: 4px 0 4px 10px;
+      font-size: 14px;
+    }
+    ul.log li.pending { border-left-color: var(--info); }
+    ul.log li.ok { border-left-color: var(--ok); }
+    ul.log li.error { border-left-color: var(--bad); }
+    ul.log .msg { display: block; color: var(--muted); margin-top: 2px; }
+    ul.log li.error .msg { color: var(--bad); }
+    ul.log .tech { color: var(--muted); font-size: 13px; }
+    ul.log time { color: var(--muted); font-size: 13px; margin-right: 6px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Краудфандинг із поверненням коштів</h1>
+      <p>Мережа Sepolia. Автор збирає ETH до дедлайну: за успіху забирає кошти, за провалу вкладники повертають свої внески.</p>
+    </div>
+    <div class="wallet">
+      <span id="net-badge" class="badge done">Не підключено</span>
+      <span id="role-chips"></span>
+      <span id="account" class="addr"></span>
+      <button id="btn-connect" class="btn on-dark" type="button">Підключити MetaMask</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" role="status">
+    <span id="banner-text"></span>
+    <button id="btn-switch" class="btn small" type="button" hidden>Перемкнути на Sepolia</button>
+  </div>
+
+  <main class="layout">
+    <div class="stack">
+      <section class="panel" aria-labelledby="h-account">
+        <header><h2 id="h-account">Мій акаунт</h2></header>
+        <dl class="facts">
+          <dt>Баланс</dt><dd id="eth-balance">—</dd>
+          <dt>Винагороди</dt><dd id="cfr-balance">—</dd>
+        </dl>
+      </section>
+
+      <section class="panel" aria-labelledby="h-admin">
+        <header><h2 id="h-admin">Адміністратор</h2></header>
+        <p class="note">Видає й забирає роль автора, вмикає аварійну паузу.</p>
+        <label for="admin-address">Адреса акаунта</label>
+        <input id="admin-address" type="text" placeholder="0x…" autocomplete="off" spellcheck="false">
+        <div class="row">
+          <button id="btn-register" class="btn" type="button">Призначити автором</button>
+          <button id="btn-remove" class="btn secondary" type="button">Забрати роль автора</button>
+        </div>
+        <p class="note" style="margin-top:14px">Стан системи: <span id="pause-state" class="badge done">—</span></p>
+        <div class="row" style="margin-top:0">
+          <button id="btn-pause" class="btn secondary" type="button">Увімкнути паузу</button>
+          <button id="btn-unpause" class="btn secondary" type="button">Зняти паузу</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-create">
+        <header><h2 id="h-create">Нова кампанія</h2></header>
+        <p class="note">Створювати кампанії може автор.</p>
+        <label for="goal-input">Цільова сума, ETH</label>
+        <input id="goal-input" type="text" inputmode="decimal" value="0.01" autocomplete="off">
+        <label for="duration-input">Тривалість, хвилин</label>
+        <input id="duration-input" type="text" inputmode="decimal" value="5" autocomplete="off">
+        <div class="row">
+          <button id="btn-create" class="btn" type="button">Створити кампанію</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel" aria-labelledby="h-list">
+        <header>
+          <h2 id="h-list">Кампанії</h2>
+          <div class="pager">
+            <span id="pager-info"></span>
+            <button id="btn-newer" class="btn secondary small" type="button">Новіші</button>
+            <button id="btn-older" class="btn secondary small" type="button">Старіші</button>
+            <button id="btn-refresh" class="btn secondary small" type="button">Оновити</button>
+          </div>
+        </header>
+        <div id="campaign-list"><p class="empty">Підключіть MetaMask, щоб побачити кампанії.</p></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-tx">
+        <header><h2 id="h-tx">Мої транзакції</h2></header>
+        <ul id="tx-list" class="log"><li><span class="msg">Тут з’являтимуться надіслані транзакції та їхній статус.</span></li></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="h-events">
+        <header><h2 id="h-events">Події в контрактах</h2></header>
+        <ul id="event-list" class="log"><li><span class="msg">Сторінка оновлюється сама, коли в контракті відбувається подія.</span></li></ul>
+      </section>
+    </div>
+  </main>
+
+  <script src="./ethers.umd.min.js"></script>
+  <script src="./config.js"></script>
+  <script src="./abi.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

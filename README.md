@@ -1,0 +1,116 @@
+# Краудфандинг із поверненням коштів
+
+Практичне заняття № 2 «Смарт-контракти та децентралізований застосунок». Сценарій A: автор створює кампанію із цільовою сумою та дедлайном, вкладники вносять ETH. Якщо до дедлайну ціль зібрано, автор забирає кошти, а вкладники отримують токени-винагороди. Якщо ціль не зібрано, кожен вкладник повертає свій внесок. Усі виплати працюють за схемою «отримувач забирає сам».
+
+## Склад системи
+
+| Контракт | Призначення |
+|---|---|
+| `AuthorRegistry` | реєстр ролей: адміністратор та автор кампаній (OpenZeppelin `AccessControl`) |
+| `RewardToken` | токен винагород CFR, стандарт ERC-20; випускати може лише контракт `Campaigns` (роль `MINTER_ROLE`) |
+| `Campaigns` | головний контракт: кампанії, внески, виплата авторові, повернення внесків, винагороди, аварійна пауза |
+
+Контракти взаємодіють через інтерфейси `IAuthorRegistry` та `IRewardToken`. Папка `contracts/attack` містить навчальну вразливу копію (`VulnerableCampaigns`) і контракт-атакувальник (`ReentrancyAttacker`) для демонстрації атаки повторного входу. У реальні мережі вони не розгортаються.
+
+Ролі: **адміністратор** (призначає авторів, вмикає й знімає паузу), **автор** (створює кампанії, забирає кошти успішної кампанії), **вкладник** (будь-яка адреса).
+
+## Розгорнуті контракти (мережа Sepolia)
+
+| Контракт | Адреса | Код в Etherscan |
+|---|---|---|
+| AuthorRegistry | `0xf4893FbAd77364C5792FF14D581912582EFD33a2` | [відкрити](https://sepolia.etherscan.io/address/0xf4893FbAd77364C5792FF14D581912582EFD33a2#code) |
+| RewardToken | `0xc239645b77537c569539D6D35448A073bD5a51d9` | [відкрити](https://sepolia.etherscan.io/address/0xc239645b77537c569539D6D35448A073bD5a51d9#code) |
+| Campaigns | `0x499D12616F871450a30c63913cA6DA26aB6F8111` | [відкрити](https://sepolia.etherscan.io/address/0x499D12616F871450a30c63913cA6DA26aB6F8111#code) |
+
+Адреси також збережено у `deployments/sepolia.json`.
+
+## Вимоги
+
+- Node.js 22 або новіший
+- Git
+- Python 3 (лише для Slither, необов'язково)
+- Гаманець MetaMask для роботи з вебінтерфейсом
+
+## Встановлення
+
+```
+npm install
+```
+
+## Тести та покриття
+
+```
+npx hardhat test                 # усі тести
+npx hardhat test --coverage      # покриття рядків та інструкцій, HTML-звіт у coverage/html
+npx hardhat test --gas-stats     # витрати газу по функціях
+npx hardhat test --gas-stats --build-profile production   # те саме з оптимізатором компілятора
+```
+
+## Налаштування секретів
+
+Ключі в коді та в репозиторії не зберігаються. Скопіюйте `.env.example` у `.env` і заповніть значення (файл `.env` виключено з git):
+
+```
+SEPOLIA_RPC_URL=адреса вузла мережі Sepolia
+SEPOLIA_PRIVATE_KEY=приватний ключ тестового акаунта (з префіксом 0x)
+ETHERSCAN_API_KEY=ключ Etherscan для верифікації коду
+AUTHOR_ADDRESS=адреса, якій одразу видати роль автора (необов'язково)
+```
+
+Використовуйте лише тестовий акаунт без реальних коштів.
+
+## Розгортання
+
+Скрипт `scripts/deploy.ts` приймає мережу (параметр `--network`) і необов'язкову адресу `AUTHOR_ADDRESS`.
+
+```
+npx hardhat run scripts/deploy.ts                    # локальна мережа
+npx hardhat run scripts/deploy.ts --network sepolia  # Sepolia
+```
+
+Після розгортання адреси записуються в `deployments/<мережа>.json`, а скрипт друкує готові команди верифікації:
+
+```
+npx hardhat verify --network sepolia <адреса> <параметри конструктора>
+```
+
+Оновіть адреси в `web/config.js`, якщо розгортаєте систему заново.
+
+## Вебінтерфейс
+
+Папка `web` містить просту сторінку: підключення MetaMask, перевірка мережі Sepolia, читання стану контрактів, відправлення транзакцій зі статусом, автоматичне оновлення за подіями й зрозумілі повідомлення про помилки. MetaMask не працює зі сторінками, відкритими як файли, тому запускайте локальний сервер:
+
+```
+python -m http.server 8000 --directory web
+```
+
+і відкрийте `http://localhost:8000`. Якщо в папці `web` немає файла `ethers.umd.min.js`, скопіюйте його з встановлених залежностей:
+
+```
+copy node_modules\ethers\dist\ethers.umd.min.js web\ethers.umd.min.js
+```
+
+## Статичний аналіз Slither
+
+```
+pip install slither-analyzer solc-select
+solc-select install 0.8.34
+solc-select use 0.8.34
+slither contracts/Campaigns.sol --solc-remaps "@openzeppelin/=node_modules/@openzeppelin/" --filter-paths node_modules
+```
+
+## Автоматична перевірка
+
+Файл `.github/workflows/ci.yml` запускає тести, покриття та Slither на кожен коміт у GitHub Actions. Файл `.github/workflows/pages.yml` публікує вебінтерфейс (папку `web`) на GitHub Pages.
+
+## Структура проєкту
+
+```
+contracts/          контракти й інтерфейси
+contracts/attack/   навчальна вразлива копія та контракт-атакувальник
+test/               тести (TypeScript, Mocha, Chai, ethers)
+scripts/deploy.ts   скрипт розгортання
+deployments/        адреси розгорнутих контрактів
+web/                вебінтерфейс
+.github/workflows/  автоматичні перевірки та хостинг
+```

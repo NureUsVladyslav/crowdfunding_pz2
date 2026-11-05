@@ -1,0 +1,11 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "deployer": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300",
+  "author": "0x95cd215058b56846c03f23a4f3577e0ea23fd300",
+  "contracts": {
+    "AuthorRegistry": "0xf4893FbAd77364C5792FF14D581912582EFD33a2",
+    "RewardToken": "0xc239645b77537c569539D6D35448A073bD5a51d9",
+    "Campaigns": "0x499D12616F871450a30c63913cA6DA26aB6F8111"
+  }
+}

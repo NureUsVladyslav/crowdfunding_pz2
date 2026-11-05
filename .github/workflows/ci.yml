@@ -1,0 +1,73 @@
+# Автоматична перевірка на кожен коміт: тести, покриття та статичний аналіз Slither
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Тести та покриття
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Встановлення залежностей
+        run: npm ci
+
+      - name: Тести
+        run: npx hardhat test
+
+      - name: Покриття тестами
+        run: npx hardhat test --coverage
+
+      - name: Збереження HTML-звіту про покриття
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: coverage/html
+          if-no-files-found: ignore
+
+  slither:
+    name: Статичний аналіз Slither
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Встановлення залежностей (бібліотека OpenZeppelin)
+        run: npm ci
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Встановлення Slither та компілятора solc 0.8.34
+        run: |
+          pip install slither-analyzer solc-select
+          solc-select install 0.8.34
+          solc-select use 0.8.34
+
+      # Прапорець --fail-none: усі зауваження Slither розібрано у звіті, тому вони не повинні червонити збірку
+      - name: Slither, Campaigns
+        run: slither contracts/Campaigns.sol --solc-remaps "@openzeppelin/=node_modules/@openzeppelin/" --filter-paths node_modules --fail-none
+
+      - name: Slither, AuthorRegistry
+        run: slither contracts/AuthorRegistry.sol --solc-remaps "@openzeppelin/=node_modules/@openzeppelin/" --filter-paths node_modules --fail-none
+
+      - name: Slither, RewardToken
+        run: slither contracts/RewardToken.sol --solc-remaps "@openzeppelin/=node_modules/@openzeppelin/" --filter-paths node_modules --fail-none
+
+      - name: Slither, VulnerableCampaigns (навмисно вразлива копія)
+        run: slither contracts/attack/VulnerableCampaigns.sol --filter-paths node_modules --fail-none
