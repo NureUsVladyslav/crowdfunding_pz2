@@ -1,0 +1,202 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "fromBlock": 12064427,
+  "toBlock": 12074539,
+  "updatedAt": "2026-11-06T05:36:07.879Z",
+  "events": [
+    {
+      "block": 12062329,
+      "logIndex": 210,
+      "txHash": "0x6cf6a0d20610a2518bd30a902db3ad836f278cf7deff70bfc7d8a54010d8735d",
+      "contract": "AuthorRegistry",
+      "name": "RoleGranted",
+      "args": {
+        "role": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "account": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300",
+        "sender": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793794224
+    },
+    {
+      "block": 12062333,
+      "logIndex": 62,
+      "txHash": "0x581f33b414e3f888b20e45606bd78aae5d5ea46fa60bf89addc55f18bb8b8e43",
+      "contract": "AuthorRegistry",
+      "name": "RoleGranted",
+      "args": {
+        "role": "0x518c0194402466e4c42f66eff36bbae4f19f671b0111691aa796b0a70054d12e",
+        "account": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300",
+        "sender": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793794272
+    },
+    {
+      "block": 12063652,
+      "logIndex": 46,
+      "txHash": "0x027ca3fd2f0bedbcc3566568b5605d1ea1f2c095661a7b3bdc9450c9bba4b3d9",
+      "contract": "AuthorRegistry",
+      "name": "RoleGranted",
+      "args": {
+        "role": "0x518c0194402466e4c42f66eff36bbae4f19f671b0111691aa796b0a70054d12e",
+        "account": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "sender": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793810268
+    },
+    {
+      "block": 12063655,
+      "logIndex": 4,
+      "txHash": "0x3bbb53d81fff69235393b968b83d11e9745736c0907e1af84b77c08bbee130ab",
+      "contract": "AuthorRegistry",
+      "name": "RoleRevoked",
+      "args": {
+        "role": "0x518c0194402466e4c42f66eff36bbae4f19f671b0111691aa796b0a70054d12e",
+        "account": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "sender": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793810304
+    },
+    {
+      "block": 12063686,
+      "logIndex": 42,
+      "txHash": "0xaddd37a11d50dcb90f1d11ceb52ddfbd8a6307f43dcd104a17b4c2fc2a1439cf",
+      "contract": "AuthorRegistry",
+      "name": "RoleGranted",
+      "args": {
+        "role": "0x518c0194402466e4c42f66eff36bbae4f19f671b0111691aa796b0a70054d12e",
+        "account": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "sender": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793810676
+    },
+    {
+      "block": 12063687,
+      "logIndex": 180,
+      "txHash": "0x2c978778f71a84f8937410ad8ca3eea75ccac99d0c06cb47750b18e9854411d5",
+      "contract": "AuthorRegistry",
+      "name": "RoleRevoked",
+      "args": {
+        "role": "0x518c0194402466e4c42f66eff36bbae4f19f671b0111691aa796b0a70054d12e",
+        "account": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "sender": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793810688
+    },
+    {
+      "block": 12063697,
+      "logIndex": 30,
+      "txHash": "0x25f4aeee73ca9b71c07f78994c9b306838cab54d1ade75c96ca1eddd400d0f32",
+      "contract": "Campaigns",
+      "name": "CampaignCreated",
+      "args": {
+        "id": "1",
+        "author": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300",
+        "goal": "10000000000000000",
+        "deadline": "1793811108"
+      },
+      "timestamp": 1793810808
+    },
+    {
+      "block": 12063700,
+      "logIndex": 301,
+      "txHash": "0x68a4a65a1aba91355a798c6e0d29179d750d1cea7b065f6e062fbec6927a344c",
+      "contract": "Campaigns",
+      "name": "CampaignCreated",
+      "args": {
+        "id": "2",
+        "author": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300",
+        "goal": "50000000000000000",
+        "deadline": "1793811144"
+      },
+      "timestamp": 1793810844
+    },
+    {
+      "block": 12063711,
+      "logIndex": 36,
+      "txHash": "0x1f197d32854425079a3bd077bdfb34269e68d303f56ae230b2fafb16dc42a4e6",
+      "contract": "Campaigns",
+      "name": "Contributed",
+      "args": {
+        "id": "2",
+        "contributor": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "amount": "10000000000000000"
+      },
+      "timestamp": 1793810976
+    },
+    {
+      "block": 12063713,
+      "logIndex": 19,
+      "txHash": "0x3b6414067cc1374fe2780d2d7577d7fe80ca05c1c8e8727afe530cf8609ea4cb",
+      "contract": "Campaigns",
+      "name": "Contributed",
+      "args": {
+        "id": "1",
+        "contributor": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "amount": "10000000000000000"
+      },
+      "timestamp": 1793811000
+    },
+    {
+      "block": 12063744,
+      "logIndex": 44,
+      "txHash": "0x5eb0314001eb198a9173b8568a44be25721717a0ea329daa257f255ab6564a37",
+      "contract": "Campaigns",
+      "name": "Refunded",
+      "args": {
+        "id": "2",
+        "contributor": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "amount": "10000000000000000"
+      },
+      "timestamp": 1793811372
+    },
+    {
+      "block": 12063781,
+      "logIndex": 4,
+      "txHash": "0xc6de3b4519fe8de0e6dddce208b22b909e0304fe035c9636e44dd1bcf519a2e3",
+      "contract": "Campaigns",
+      "name": "RewardClaimed",
+      "args": {
+        "id": "1",
+        "contributor": "0xb9Bb4686423df183C207D6c6234757988159b17B",
+        "reward": "10000000000000000000"
+      },
+      "timestamp": 1793811816
+    },
+    {
+      "block": 12063790,
+      "logIndex": 3,
+      "txHash": "0x661d85b116defdede99c4391ec66cce476624449309e53667fdd4f70aba62b77",
+      "contract": "Campaigns",
+      "name": "Withdrawn",
+      "args": {
+        "id": "1",
+        "author": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300",
+        "amount": "10000000000000000"
+      },
+      "timestamp": 1793811924
+    },
+    {
+      "block": 12063795,
+      "logIndex": 202,
+      "txHash": "0xac7355bb8a729ad60f2b82eaf73235382877873177bee74a2e2a3ee0aa2f8f5e",
+      "contract": "Campaigns",
+      "name": "Paused",
+      "args": {
+        "account": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793811984
+    },
+    {
+      "block": 12063798,
+      "logIndex": 70,
+      "txHash": "0x388e132cdf21d802dac2349dde708c588c7a784e9c455ae1bc3ecc751225015a",
+      "contract": "Campaigns",
+      "name": "Unpaused",
+      "args": {
+        "account": "0x95cd215058B56846c03f23A4f3577E0ea23Fd300"
+      },
+      "timestamp": 1793812020
+    }
+  ]
+}

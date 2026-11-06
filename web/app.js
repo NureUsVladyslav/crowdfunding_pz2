@@ -15,41 +15,30 @@
 
   // Зрозумілі пояснення для власних помилок контрактів
   const ERROR_TEXT = {
-    NotAdmin: () =>
-      "Цю дію може виконати лише адміністратор. Підключіть акаунт адміністратора.",
+    NotAdmin: () => "Цю дію може виконати лише адміністратор. Підключіть акаунт адміністратора.",
     AccessControlUnauthorizedAccount: (a) =>
       a[1] === MINTER_ROLE
         ? "Контракт кампаній не має права випускати винагороди: йому не видано роль MINTER_ROLE."
         : "Цю дію може виконати лише адміністратор. Підключіть акаунт адміністратора.",
-    NotAuthor: () =>
-      "У вашого акаунта немає ролі автора. Адміністратор має спочатку призначити вас автором.",
+    NotAuthor: () => "У вашого акаунта немає ролі автора. Адміністратор має спочатку призначити вас автором.",
     ZeroGoal: () => "Цільова сума має бути більшою за нуль.",
     ZeroDuration: () => "Тривалість має бути більшою за нуль.",
     ZeroAmount: () => "Сума внеску має бути більшою за нуль.",
     ZeroAddress: () => "Адреса не може бути нульовою.",
     CampaignNotFound: (a) => `Кампанії №${a[0]} не існує.`,
-    CampaignEnded: () =>
-      "Час кампанії вичерпано, внески більше не приймаються.",
-    CampaignNotEnded: () =>
-      "Кампанія ще триває. Ця дія стане доступною після дедлайну.",
+    CampaignEnded: () => "Час кампанії вичерпано, внески більше не приймаються.",
+    CampaignNotEnded: () => "Кампанія ще триває. Ця дія стане доступною після дедлайну.",
     GoalNotReached: () => "Кампанія не зібрала цільову суму.",
-    GoalAlreadyReached: () =>
-      "Кампанія зібрала цільову суму, тому повернути внесок не можна.",
+    GoalAlreadyReached: () => "Кампанія зібрала цільову суму, тому повернути внесок не можна.",
     NotCampaignAuthor: () => "Забрати кошти може лише автор цієї кампанії.",
     AlreadyWithdrawn: () => "Автор уже забрав кошти цієї кампанії.",
-    NothingToRefund: () =>
-      "У вас немає внеску в цій кампанії для повернення (або ви його вже забрали).",
-    NothingToClaim: () =>
-      "У вас немає внеску в цій кампанії, за який належить винагорода (або ви її вже забрали).",
-    TransferFailed: () =>
-      "Не вдалося надіслати ETH. Транзакцію скасовано, нічого не списано.",
-    EnforcedPause: () =>
-      "Систему призупинено адміністратором. Спробуйте після зняття паузи.",
+    NothingToRefund: () => "У вас немає внеску в цій кампанії для повернення (або ви його вже забрали).",
+    NothingToClaim: () => "У вас немає внеску в цій кампанії, за який належить винагорода (або ви її вже забрали).",
+    TransferFailed: () => "Не вдалося надіслати ETH. Транзакцію скасовано, нічого не списано.",
+    EnforcedPause: () => "Систему призупинено адміністратором. Спробуйте після зняття паузи.",
     ExpectedPause: () => "Паузу не ввімкнено, тож знімати нічого.",
-    ReentrancyGuardReentrantCall: () =>
-      "Повторний виклик заблоковано захистом від повторного входу.",
-    SafeCastOverflowedUintDowncast: () =>
-      "Значення завелике для зберігання в контракті.",
+    ReentrancyGuardReentrantCall: () => "Повторний виклик заблоковано захистом від повторного входу.",
+    SafeCastOverflowedUintDowncast: () => "Значення завелике для зберігання в контракті.",
   };
 
   // ---------- Стан ----------
@@ -78,17 +67,7 @@
   // ---------- Допоміжні функції ----------
 
   function esc(value) {
-    return String(value).replace(
-      /[&<>"']/g,
-      (ch) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;",
-        }[ch]),
-    );
+    return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   }
 
   function shortAddr(addr) {
@@ -110,10 +89,7 @@
     if (left <= 0) return "час вичерпано";
     if (left < 60) return `лишилось ${left} с`;
     if (left < 3600) return `лишилось ${Math.floor(left / 60)} хв`;
-    if (left < 86400)
-      return `лишилось ${Math.floor(left / 3600)} год ${Math.floor(
-        (left % 3600) / 60,
-      )} хв`;
+    if (left < 86400) return `лишилось ${Math.floor(left / 3600)} год ${Math.floor((left % 3600) / 60)} хв`;
     return `лишилось ${Math.floor(left / 86400)} дн`;
   }
 
@@ -134,37 +110,17 @@
       e && e.data,
       e && e.error && e.error.data,
       e && e.info && e.info.error && e.info.error.data,
-      e &&
-        e.info &&
-        e.info.error &&
-        e.info.error.data &&
-        e.info.error.data.data,
-      e &&
-        e.info &&
-        e.info.error &&
-        e.info.error.data &&
-        e.info.error.data.originalError &&
-        e.info.error.data.originalError.data,
+      e && e.info && e.info.error && e.info.error.data && e.info.error.data.data,
+      e && e.info && e.info.error && e.info.error.data && e.info.error.data.originalError && e.info.error.data.originalError.data,
       e && e.error && e.error.data && e.error.data.data,
-      e &&
-        e.error &&
-        e.error.data &&
-        e.error.data.originalError &&
-        e.error.data.originalError.data,
+      e && e.error && e.error.data && e.error.data.originalError && e.error.data.originalError.data,
     ];
-    return (
-      candidates.find(
-        (c) => typeof c === "string" && c.startsWith("0x") && c.length >= 10,
-      ) || null
-    );
+    return candidates.find((c) => typeof c === "string" && c.startsWith("0x") && c.length >= 10) || null;
   }
 
   function friendly(name, args) {
     const make = ERROR_TEXT[name];
-    return {
-      text: make ? make(args || []) : `Контракт відхилив транзакцію (${name}).`,
-      tech: name,
-    };
+    return { text: make ? make(args || []) : `Контракт відхилив транзакцію (${name}).`, tech: name };
   }
 
   // Перетворює помилку на { text, tech }: зрозумілий текст і технічна назва
@@ -172,10 +128,7 @@
     const code = e && (e.code !== undefined ? e.code : null);
     const nested = e && e.info && e.info.error && e.info.error.code;
     if (code === "ACTION_REJECTED" || code === 4001 || nested === 4001) {
-      return {
-        text: "Ви скасували транзакцію у MetaMask. Нічого не списано.",
-        tech: "",
-      };
+      return { text: "Ви скасували транзакцію у MetaMask. Нічого не списано.", tech: "" };
     }
     if (e && e.revert && e.revert.name) {
       return friendly(e.revert.name, Array.from(e.revert.args || []));
@@ -186,36 +139,24 @@
         try {
           const parsed = iface.parseError(data);
           if (parsed) return friendly(parsed.name, Array.from(parsed.args));
-        } catch (_) {
-          /* пробуємо наступний інтерфейс */
-        }
+        } catch (_) { /* пробуємо наступний інтерфейс */ }
       }
     }
     const message = String((e && (e.shortMessage || e.message)) || e);
     if (/insufficient funds|insufficient balance/i.test(message)) {
-      return {
-        text: "Недостатньо ETH на рахунку для суми та комісії за газ.",
-        tech: "",
-      };
+      return { text: "Недостатньо ETH на рахунку для суми та комісії за газ.", tech: "" };
     }
     if (/network|fetch|timeout|disconnected/i.test(message)) {
-      return {
-        text: "Немає зв'язку з мережею. Перевірте інтернет і спробуйте ще раз.",
-        tech: "",
-      };
+      return { text: "Немає зв'язку з мережею. Перевірте інтернет і спробуйте ще раз.", tech: "" };
     }
-    return {
-      text: "Не вдалося виконати дію. Деталі: " + message.slice(0, 160),
-      tech: "",
-    };
+    return { text: "Не вдалося виконати дію. Деталі: " + message.slice(0, 160), tech: "" };
   }
 
   // ---------- Журнали ----------
 
   function addTx(label, kind, message, hash, tech) {
     const list = el("tx-list");
-    if (list.querySelector(".msg") && !list.querySelector(".badge"))
-      list.innerHTML = "";
+    if (list.querySelector(".msg") && !list.querySelector(".badge")) list.innerHTML = "";
     const li = document.createElement("li");
     list.prepend(li);
     while (list.children.length > 20) list.lastChild.remove();
@@ -224,22 +165,12 @@
   }
 
   function updateTx(li, label, kind, message, hash, tech) {
-    const badge = {
-      pending: ["info", "Очікує"],
-      ok: ["ok", "Підтверджено"],
-      error: ["bad", "Помилка"],
-    }[kind];
+    const badge = { pending: ["info", "Очікує"], ok: ["ok", "Підтверджено"], error: ["bad", "Помилка"] }[kind];
     li.className = kind;
-    const link = hash
-      ? ` <a href="${esc(cfg.explorer)}/tx/${esc(
-          hash,
-        )}" target="_blank" rel="noopener">відкрити в Etherscan</a>`
-      : "";
+    const link = hash ? ` <a href="${esc(cfg.explorer)}/tx/${esc(hash)}" target="_blank" rel="noopener">відкрити в Etherscan</a>` : "";
     const techText = tech ? ` <span class="tech">(${esc(tech)})</span>` : "";
     li.innerHTML =
-      `<time>${nowTime()}</time><span class="badge ${badge[0]}">${
-        badge[1]
-      }</span> <strong>${esc(label)}</strong>` +
+      `<time>${nowTime()}</time><span class="badge ${badge[0]}">${badge[1]}</span> <strong>${esc(label)}</strong>` +
       `<span class="msg">${esc(message)}${techText}${link}</span>`;
   }
 
@@ -255,37 +186,23 @@
   function describeEvent(name, a) {
     switch (name) {
       case "CampaignCreated":
-        return `Створено кампанію №${a[0]}: ціль ${fmtEth(
-          a[2],
-        )} ETH, автор ${shortAddr(a[1])}.`;
+        return `Створено кампанію №${a[0]}: ціль ${fmtEth(a[2])} ETH, автор ${shortAddr(a[1])}.`;
       case "Contributed":
-        return `Внесок ${fmtEth(a[2])} ETH у кампанію №${a[0]} від ${shortAddr(
-          a[1],
-        )}.`;
+        return `Внесок ${fmtEth(a[2])} ETH у кампанію №${a[0]} від ${shortAddr(a[1])}.`;
       case "Withdrawn":
-        return `Автор ${shortAddr(a[1])} забрав ${fmtEth(
-          a[2],
-        )} ETH із кампанії №${a[0]}.`;
+        return `Автор ${shortAddr(a[1])} забрав ${fmtEth(a[2])} ETH із кампанії №${a[0]}.`;
       case "Refunded":
-        return `Вкладник ${shortAddr(a[1])} повернув ${fmtEth(
-          a[2],
-        )} ETH із кампанії №${a[0]}.`;
+        return `Вкладник ${shortAddr(a[1])} повернув ${fmtEth(a[2])} ETH із кампанії №${a[0]}.`;
       case "RewardClaimed":
-        return `Вкладник ${shortAddr(a[1])} отримав винагороду ${fmtEth(
-          a[2],
-        )} CFR за кампанію №${a[0]}.`;
+        return `Вкладник ${shortAddr(a[1])} отримав винагороду ${fmtEth(a[2])} CFR за кампанію №${a[0]}.`;
       case "Paused":
         return `Систему призупинено (адміністратор ${shortAddr(a[0])}).`;
       case "Unpaused":
         return `Паузу знято (адміністратор ${shortAddr(a[0])}).`;
       case "RoleGranted":
-        return a[0] === AUTHOR_ROLE
-          ? `Роль автора видано адресі ${shortAddr(a[1])}.`
-          : `Видано роль адресі ${shortAddr(a[1])}.`;
+        return a[0] === AUTHOR_ROLE ? `Роль автора видано адресі ${shortAddr(a[1])}.` : `Видано роль адресі ${shortAddr(a[1])}.`;
       case "RoleRevoked":
-        return a[0] === AUTHOR_ROLE
-          ? `Роль автора забрано в адреси ${shortAddr(a[1])}.`
-          : `Роль забрано в адреси ${shortAddr(a[1])}.`;
+        return a[0] === AUTHOR_ROLE ? `Роль автора забрано в адреси ${shortAddr(a[1])}.` : `Роль забрано в адреси ${shortAddr(a[1])}.`;
       default:
         return `Подія ${name}.`;
     }
@@ -303,11 +220,9 @@
       const key = `${log.transactionHash}:${log.index}`;
       if (seenEvents.has(key)) return;
       seenEvents.add(key);
-      if (seenEvents.size > 500)
-        seenEvents.delete(seenEvents.values().next().value);
+      if (seenEvents.size > 500) seenEvents.delete(seenEvents.values().next().value);
     }
-    const name =
-      payload.eventName || (payload.fragment && payload.fragment.name);
+    const name = payload.eventName || (payload.fragment && payload.fragment.name);
     if (!name) return;
     addEvent(describeEvent(name, Array.from(payload.args || [])));
     scheduleRefresh();
@@ -321,10 +236,7 @@
   async function unsubscribeEvents() {
     if (!state.c) return;
     const old = state.c;
-    await Promise.all([
-      old.campaigns.removeAllListeners(),
-      old.registry.removeAllListeners(),
-    ]);
+    await Promise.all([old.campaigns.removeAllListeners(), old.registry.removeAllListeners()]);
   }
 
   function scheduleRefresh() {
@@ -340,10 +252,7 @@
 
   async function connect() {
     if (!window.ethereum) {
-      setBanner(
-        "MetaMask не знайдено. Встановіть розширення з metamask.io і оновіть сторінку.",
-        false,
-      );
+      setBanner("MetaMask не знайдено. Встановіть розширення з metamask.io і оновіть сторінку.", false);
       return;
     }
     try {
@@ -381,32 +290,18 @@
     if (!state.networkOk) {
       state.c = null;
       renderWallet();
-      setBanner(
-        `MetaMask підключено до іншої мережі. Для роботи потрібна ${cfg.chainName}.`,
-        true,
-      );
+      setBanner(`MetaMask підключено до іншої мережі. Для роботи потрібна ${cfg.chainName}.`, true);
       renderLocked(`Перемкніть MetaMask на мережу ${cfg.chainName}.`);
       return;
     }
     setBanner("", false);
     state.c = {
-      campaigns: new ethers.Contract(
-        cfg.addresses.Campaigns,
-        ABI.Campaigns,
-        state.signer,
-      ),
-      registry: new ethers.Contract(
-        cfg.addresses.AuthorRegistry,
-        ABI.AuthorRegistry,
-        state.signer,
-      ),
-      token: new ethers.Contract(
-        cfg.addresses.RewardToken,
-        ABI.RewardToken,
-        state.signer,
-      ),
+      campaigns: new ethers.Contract(cfg.addresses.Campaigns, ABI.Campaigns, state.signer),
+      registry: new ethers.Contract(cfg.addresses.AuthorRegistry, ABI.AuthorRegistry, state.signer),
+      token: new ethers.Contract(cfg.addresses.RewardToken, ABI.RewardToken, state.signer),
     };
     renderWallet();
+    renderHistory();
     subscribeEvents();
     await refreshAll();
     state.timer = setInterval(refreshAll, REFRESH_MS);
@@ -457,10 +352,7 @@
         items = await Promise.all(
           raw.map(async (c, i) => {
             const id = start + i + 1;
-            const [status, mine] = await Promise.all([
-              campaigns.status(id),
-              campaigns.contributions(id, me),
-            ]);
+            const [status, mine] = await Promise.all([campaigns.status(id), campaigns.contributions(id, me)]);
             return {
               id,
               author: c.author,
@@ -470,7 +362,7 @@
               status: Number(status),
               mine,
             };
-          }),
+          })
         );
         items.reverse();
       }
@@ -505,8 +397,7 @@
     el("btn-connect").hidden = Boolean(state.account);
     const chips = [];
     if (state.account && state.networkOk) {
-      if (state.roles.admin)
-        chips.push('<span class="badge info">Адміністратор</span>');
+      if (state.roles.admin) chips.push('<span class="badge info">Адміністратор</span>');
       if (state.roles.author) chips.push('<span class="badge ok">Автор</span>');
       chips.push('<span class="badge done">Вкладник</span>');
     }
@@ -534,60 +425,33 @@
   }
 
   function campaignCard(c) {
-    const percent =
-      c.goal > 0n ? Number((c.raised * 10000n) / c.goal) / 100 : 0;
+    const percent = c.goal > 0n ? Number((c.raised * 10000n) / c.goal) / 100 : 0;
     const reached = c.raised >= c.goal;
-    const amount =
-      state.amounts[c.id] !== undefined ? state.amounts[c.id] : "0.01";
+    const amount = state.amounts[c.id] !== undefined ? state.amounts[c.id] : "0.01";
     const off = ready() ? "" : " disabled";
     return `
       <article class="campaign" data-id="${c.id}">
         <header>
           <h3>Кампанія №${c.id}</h3>
-          <span class="badge ${STATUS_CLASS[c.status]}">${
-      STATUS_NAME[c.status]
-    }</span>
+          <span class="badge ${STATUS_CLASS[c.status]}">${STATUS_NAME[c.status]}</span>
         </header>
-        <div class="progress${
-          reached ? " reached" : ""
-        }" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(
-      percent,
-      100,
-    )}">
+        <div class="progress${reached ? " reached" : ""}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(percent, 100)}">
           <div style="width:${Math.min(percent, 100)}%"></div>
         </div>
-        <div class="raised"><span>Зібрано ${fmtEth(c.raised)} із ${fmtEth(
-      c.goal,
-    )} ETH</span><span>${percent.toFixed(percent % 1 ? 1 : 0)}%</span></div>
+        <div class="raised"><span>Зібрано ${fmtEth(c.raised)} із ${fmtEth(c.goal)} ETH</span><span>${percent.toFixed(percent % 1 ? 1 : 0)}%</span></div>
         <dl class="facts">
-          <dt>Автор</dt><dd class="addr" title="${esc(c.author)}">${esc(
-      shortAddr(c.author),
-    )}</dd>
-          <dt>Дедлайн</dt><dd>${esc(fmtDate(c.deadline))}, ${esc(
-      fmtRemaining(c.deadline),
-    )}</dd>
+          <dt>Автор</dt><dd class="addr" title="${esc(c.author)}">${esc(shortAddr(c.author))}</dd>
+          <dt>Дедлайн</dt><dd>${esc(fmtDate(c.deadline))}, ${esc(fmtRemaining(c.deadline))}</dd>
           <dt>Ваш внесок</dt><dd>${fmtEth(c.mine)} ETH</dd>
         </dl>
         <div class="actions">
-          <input class="amount" type="text" inputmode="decimal" data-id="${
-            c.id
-          }" value="${esc(amount)}" aria-label="Сума внеску в ETH, кампанія ${
-      c.id
-    }" autocomplete="off">
-          <button class="btn small" type="button" data-action="contribute" data-id="${
-            c.id
-          }"${off}>Внести ETH</button>
+          <input class="amount" type="text" inputmode="decimal" data-id="${c.id}" value="${esc(amount)}" aria-label="Сума внеску в ETH, кампанія ${c.id}" autocomplete="off">
+          <button class="btn small" type="button" data-action="contribute" data-id="${c.id}"${off}>Внести ETH</button>
         </div>
         <div class="actions">
-          <button class="btn secondary small" type="button" data-action="withdraw" data-id="${
-            c.id
-          }"${off} title="Лише для автора кампанії">Забрати кошти (автор)</button>
-          <button class="btn secondary small" type="button" data-action="refund" data-id="${
-            c.id
-          }"${off}>Повернути внесок</button>
-          <button class="btn secondary small" type="button" data-action="claim" data-id="${
-            c.id
-          }"${off}>Забрати винагороду</button>
+          <button class="btn secondary small" type="button" data-action="withdraw" data-id="${c.id}"${off} title="Лише для автора кампанії">Забрати кошти (автор)</button>
+          <button class="btn secondary small" type="button" data-action="refund" data-id="${c.id}"${off}>Повернути внесок</button>
+          <button class="btn secondary small" type="button" data-action="claim" data-id="${c.id}"${off}>Забрати винагороду</button>
         </div>
       </article>`;
   }
@@ -597,16 +461,11 @@
     const active = document.activeElement;
     const keep =
       active && active.classList && active.classList.contains("amount")
-        ? {
-            id: active.dataset.id,
-            start: active.selectionStart,
-            end: active.selectionEnd,
-          }
+        ? { id: active.dataset.id, start: active.selectionStart, end: active.selectionEnd }
         : null;
 
     if (total === 0) {
-      list.innerHTML =
-        '<p class="empty">Кампаній ще немає. Автор може створити першу в панелі «Нова кампанія».</p>';
+      list.innerHTML = '<p class="empty">Кампаній ще немає. Автор може створити першу в панелі «Нова кампанія».</p>';
     } else {
       list.innerHTML = items.map(campaignCard).join("");
     }
@@ -620,32 +479,19 @@
       const input = list.querySelector(`.amount[data-id="${keep.id}"]`);
       if (input) {
         input.focus();
-        try {
-          input.setSelectionRange(keep.start, keep.end);
-        } catch (_) {
-          /* не критично */
-        }
+        try { input.setSelectionRange(keep.start, keep.end); } catch (_) { /* не критично */ }
       }
     }
   }
 
   function updateButtons() {
     const on = ready() && !state.busy;
-    [
-      "btn-register",
-      "btn-remove",
-      "btn-pause",
-      "btn-unpause",
-      "btn-create",
-      "btn-refresh",
-    ].forEach((id) => {
+    ["btn-register", "btn-remove", "btn-pause", "btn-unpause", "btn-create", "btn-refresh"].forEach((id) => {
       el(id).disabled = !on && !(id === "btn-refresh" && ready());
     });
-    document
-      .querySelectorAll("#campaign-list button[data-action]")
-      .forEach((b) => {
-        b.disabled = !on;
-      });
+    document.querySelectorAll("#campaign-list button[data-action]").forEach((b) => {
+      b.disabled = !on;
+    });
   }
 
   // ---------- Відправлення транзакцій ----------
@@ -653,54 +499,23 @@
   // Спершу пробний виклик без підпису: якщо контракт відхилить, користувач одразу бачить причину
   async function runTx(label, contract, method, args, overrides) {
     if (!ready()) {
-      addTx(
-        label,
-        "error",
-        `Підключіть MetaMask і виберіть мережу ${cfg.chainName}.`,
-      );
+      addTx(label, "error", `Підключіть MetaMask і виберіть мережу ${cfg.chainName}.`);
       return;
     }
     state.busy = true;
     updateButtons();
-    const entry = addTx(
-      label,
-      "pending",
-      "Перевіряємо, чи контракт прийме транзакцію…",
-    );
+    const entry = addTx(label, "pending", "Перевіряємо, чи контракт прийме транзакцію…");
     const opts = overrides || {};
     try {
       await contract[method].staticCall(...args, opts);
-      updateTx(
-        entry.li,
-        label,
-        "pending",
-        "Підтвердьте транзакцію у вікні MetaMask…",
-      );
+      updateTx(entry.li, label, "pending", "Підтвердьте транзакцію у вікні MetaMask…");
       const tx = await contract[method](...args, opts);
-      updateTx(
-        entry.li,
-        label,
-        "pending",
-        "Транзакцію надіслано. Чекаємо підтвердження в блоці…",
-        tx.hash,
-      );
+      updateTx(entry.li, label, "pending", "Транзакцію надіслано. Чекаємо підтвердження в блоці…", tx.hash);
       const receipt = await tx.wait();
       if (receipt && receipt.status === 1) {
-        updateTx(
-          entry.li,
-          label,
-          "ok",
-          `Підтверджено у блоці ${receipt.blockNumber}.`,
-          tx.hash,
-        );
+        updateTx(entry.li, label, "ok", `Підтверджено у блоці ${receipt.blockNumber}.`, tx.hash);
       } else {
-        updateTx(
-          entry.li,
-          label,
-          "error",
-          "Транзакцію відхилено мережею.",
-          tx.hash,
-        );
+        updateTx(entry.li, label, "error", "Транзакцію відхилено мережею.", tx.hash);
       }
     } catch (e) {
       const info = explainError(e);
@@ -723,42 +538,25 @@
   function readAddress(label) {
     const value = el("admin-address").value.trim();
     if (!ethers.isAddress(value)) {
-      addTx(
-        label,
-        "error",
-        "Введіть коректну адресу акаунта, що починається з 0x.",
-      );
+      addTx(label, "error", "Введіть коректну адресу акаунта, що починається з 0x.");
       return null;
     }
     return ethers.getAddress(value);
   }
 
   function notReady(label) {
-    addTx(
-      label,
-      "error",
-      `Підключіть MetaMask і виберіть мережу ${cfg.chainName}.`,
-    );
+    addTx(label, "error", `Підключіть MetaMask і виберіть мережу ${cfg.chainName}.`);
   }
 
   function onCreate() {
     if (!ready()) return notReady("Створення кампанії");
     const goal = parseEth(el("goal-input").value);
-    const minutes = Number(
-      String(el("duration-input").value).trim().replace(",", "."),
-    );
+    const minutes = Number(String(el("duration-input").value).trim().replace(",", "."));
     if (goal === null || !Number.isFinite(minutes) || minutes < 0) {
-      addTx(
-        "Створення кампанії",
-        "error",
-        "Введіть суму та тривалість числами, наприклад 0.01 і 5.",
-      );
+      addTx("Створення кампанії", "error", "Введіть суму та тривалість числами, наприклад 0.01 і 5.");
       return;
     }
-    runTx("Створення кампанії", state.c.campaigns, "createCampaign", [
-      goal,
-      Math.round(minutes * 60),
-    ]);
+    runTx("Створення кампанії", state.c.campaigns, "createCampaign", [goal, Math.round(minutes * 60)]);
   }
 
   function onCardAction(button) {
@@ -767,22 +565,13 @@
     const campaigns = state.c.campaigns;
     switch (button.dataset.action) {
       case "contribute": {
-        const raw =
-          state.amounts[button.dataset.id] !== undefined
-            ? state.amounts[button.dataset.id]
-            : "0.01";
+        const raw = state.amounts[button.dataset.id] !== undefined ? state.amounts[button.dataset.id] : "0.01";
         const amount = parseEth(raw);
         if (amount === null) {
-          addTx(
-            `Внесок у кампанію №${id}`,
-            "error",
-            "Введіть суму числом, наприклад 0.01.",
-          );
+          addTx(`Внесок у кампанію №${id}`, "error", "Введіть суму числом, наприклад 0.01.");
           return;
         }
-        runTx(`Внесок у кампанію №${id}`, campaigns, "contribute", [id], {
-          value: amount,
-        });
+        runTx(`Внесок у кампанію №${id}`, campaigns, "contribute", [id], { value: amount });
         break;
       }
       case "withdraw":
@@ -792,14 +581,92 @@
         runTx(`Повернення внеску, кампанія №${id}`, campaigns, "refund", [id]);
         break;
       case "claim":
-        runTx(
-          `Отримання винагороди, кампанія №${id}`,
-          campaigns,
-          "claimReward",
-          [id],
-        );
+        runTx(`Отримання винагороди, кампанія №${id}`, campaigns, "claimReward", [id]);
         break;
     }
+  }
+
+  // ---------- Історія операцій (дані індексатора) ----------
+
+  const HISTORY_ROWS = 100;
+  let historyData = null;
+
+  function roleName(role) {
+    if (role === AUTHOR_ROLE) return "автора";
+    if (role === ethers.ZeroHash) return "адміністратора";
+    return "";
+  }
+
+  // Перетворює запис індексатора на рядок таблиці
+  function historyView(ev) {
+    const a = ev.args;
+    const eth = (v) => `${fmtEth(BigInt(v))} ETH`;
+    switch (ev.name) {
+      case "CampaignCreated":
+        return { op: "Створено кампанію", id: a.id, who: a.author, amount: `ціль ${eth(a.goal)}` };
+      case "Contributed":
+        return { op: "Внесок", id: a.id, who: a.contributor, amount: eth(a.amount) };
+      case "Withdrawn":
+        return { op: "Виплата автору", id: a.id, who: a.author, amount: eth(a.amount) };
+      case "Refunded":
+        return { op: "Повернення внеску", id: a.id, who: a.contributor, amount: eth(a.amount) };
+      case "RewardClaimed":
+        return { op: "Отримання винагороди", id: a.id, who: a.contributor, amount: `${fmtEth(BigInt(a.reward))} CFR` };
+      case "Paused":
+        return { op: "Пауза", id: "", who: a.account, amount: "" };
+      case "Unpaused":
+        return { op: "Зняття паузи", id: "", who: a.account, amount: "" };
+      case "RoleGranted":
+        return { op: `Видано роль ${roleName(a.role)}`.trim(), id: "", who: a.account, amount: "" };
+      case "RoleRevoked":
+        return { op: `Забрано роль ${roleName(a.role)}`.trim(), id: "", who: a.account, amount: "" };
+      default:
+        return { op: ev.name, id: "", who: "", amount: "" };
+    }
+  }
+
+  function involves(ev, account) {
+    if (!account) return false;
+    return Object.values(ev.args).some((v) => typeof v === "string" && v.toLowerCase() === account.toLowerCase());
+  }
+
+  function renderHistory() {
+    const meta = el("history-meta");
+    const body = el("history-body");
+    if (!historyData) return;
+    if (historyData.error) {
+      meta.textContent = historyData.error;
+      body.innerHTML = "";
+      return;
+    }
+    const onlyMine = el("history-mine").checked && state.account;
+    const all = historyData.events.filter((ev) => !onlyMine || involves(ev, state.account));
+    const rows = all.slice().reverse().slice(0, HISTORY_ROWS);
+    meta.textContent =
+      `Записів: ${all.length}` +
+      (all.length > rows.length ? `, показано останні ${rows.length}` : "") +
+      `. Індексатор прочитав блоки ${historyData.fromBlock}–${historyData.toBlock}, оновлено ${new Date(historyData.updatedAt).toLocaleString("uk-UA")}.`;
+    body.innerHTML = rows
+      .map((ev) => {
+        const v = historyView(ev);
+        const link = `<a href="${esc(cfg.explorer)}/tx/${esc(ev.txHash)}" target="_blank" rel="noopener">${esc(ev.txHash.slice(0, 10))}…</a>`;
+        return (
+          `<tr><td class="time">${esc(fmtDate(ev.timestamp))}</td><td>${esc(v.op)}</td><td>${v.id === "" ? "" : "№" + esc(v.id)}</td>` +
+          `<td class="addr" title="${esc(v.who)}">${esc(shortAddr(v.who))}</td><td>${esc(v.amount)}</td><td>${link}</td></tr>`
+        );
+      })
+      .join("");
+  }
+
+  async function loadHistory() {
+    try {
+      const response = await fetch("./history.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("not found");
+      historyData = await response.json();
+    } catch (_) {
+      historyData = { error: "Файл history.json не знайдено. Запустіть індексатор: node scripts/indexer.mjs (див. README).", events: [] };
+    }
+    renderHistory();
   }
 
   // ---------- Запуск ----------
@@ -808,28 +675,18 @@
     el("btn-connect").addEventListener("click", connect);
     el("btn-switch").addEventListener("click", switchNetwork);
     el("btn-refresh").addEventListener("click", refreshAll);
-    el("btn-newer").addEventListener("click", () => {
-      state.page = Math.max(0, state.page - 1);
-      refreshAll();
-    });
-    el("btn-older").addEventListener("click", () => {
-      state.page += 1;
-      refreshAll();
-    });
+    el("btn-newer").addEventListener("click", () => { state.page = Math.max(0, state.page - 1); refreshAll(); });
+    el("btn-older").addEventListener("click", () => { state.page += 1; refreshAll(); });
     el("btn-create").addEventListener("click", onCreate);
     el("btn-register").addEventListener("click", () => {
       if (!ready()) return notReady("Призначення автора");
       const addr = readAddress("Призначення автора");
-      if (addr)
-        runTx("Призначення автора", state.c.registry, "registerAuthor", [addr]);
+      if (addr) runTx("Призначення автора", state.c.registry, "registerAuthor", [addr]);
     });
     el("btn-remove").addEventListener("click", () => {
       if (!ready()) return notReady("Скасування ролі автора");
       const addr = readAddress("Скасування ролі автора");
-      if (addr)
-        runTx("Скасування ролі автора", state.c.registry, "removeAuthor", [
-          addr,
-        ]);
+      if (addr) runTx("Скасування ролі автора", state.c.registry, "removeAuthor", [addr]);
     });
     el("btn-pause").addEventListener("click", () => {
       if (!ready()) return notReady("Увімкнення паузи");
@@ -840,14 +697,15 @@
       runTx("Зняття паузи", state.c.campaigns, "unpause", []);
     });
 
+    el("history-mine").addEventListener("change", renderHistory);
+
     const list = el("campaign-list");
     list.addEventListener("click", (ev) => {
       const button = ev.target.closest("button[data-action]");
       if (button && !button.disabled) onCardAction(button);
     });
     list.addEventListener("input", (ev) => {
-      if (ev.target.classList.contains("amount"))
-        state.amounts[ev.target.dataset.id] = ev.target.value;
+      if (ev.target.classList.contains("amount")) state.amounts[ev.target.dataset.id] = ev.target.value;
     });
 
     if (window.ethereum && window.ethereum.on) {
@@ -859,21 +717,16 @@
   async function init() {
     bind();
     updateButtons();
+    loadHistory();
+    setInterval(loadHistory, 30000);
     if (!window.ethereum) {
-      setBanner(
-        "MetaMask не знайдено. Встановіть розширення з metamask.io і оновіть сторінку.",
-        false,
-      );
+      setBanner("MetaMask не знайдено. Встановіть розширення з metamask.io і оновіть сторінку.", false);
       return;
     }
     try {
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
       if (accounts.length) await setup();
-    } catch (_) {
-      /* користувач підключиться кнопкою */
-    }
+    } catch (_) { /* користувач підключиться кнопкою */ }
   }
 
   init();

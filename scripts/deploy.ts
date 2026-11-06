@@ -33,6 +33,8 @@ if (balance === 0n) {
 const registry = await ethers.deployContract("AuthorRegistry", [deployer.address]);
 await registry.waitForDeployment();
 const registryAddress = await registry.getAddress();
+// Блок розгортання потрібен індексатору подій, щоб знати, з якого місця читати журнал
+const deployBlock = (await registry.deploymentTransaction()?.wait())?.blockNumber;
 console.log(`AuthorRegistry: ${registryAddress}`);
 
 // 2. Токен винагород: адміністратором стає розгортальник
@@ -68,6 +70,7 @@ const result = {
   network: networkName,
   chainId: Number(chainId),
   deployer: deployer.address,
+  deployBlock: deployBlock ?? null,
   author: authorAddress ?? null,
   contracts: {
     AuthorRegistry: registryAddress,

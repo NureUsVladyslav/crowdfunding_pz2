@@ -168,6 +168,14 @@
     ul.log .msg { display: block; color: var(--muted); margin-top: 2px; }
     ul.log li.error .msg { color: var(--bad); }
     ul.log .tech { color: var(--muted); font-size: 13px; }
+
+    .table-wrap { overflow-x: auto; }
+    table.history { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table.history th { text-align: left; color: var(--muted); font-weight: 600; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    table.history td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    table.history tr:last-child td { border-bottom: 0; }
+    table.history .time { white-space: nowrap; color: var(--muted); }
+    .check { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); margin: 0; }
     ul.log time { color: var(--muted); font-size: 13px; margin-right: 6px; }
   </style>
 </head>
@@ -251,6 +259,20 @@
       <section class="panel" aria-labelledby="h-events">
         <header><h2 id="h-events">Події в контрактах</h2></header>
         <ul id="event-list" class="log"><li><span class="msg">Сторінка оновлюється сама, коли в контракті відбувається подія.</span></li></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="h-history">
+        <header>
+          <h2 id="h-history">Історія операцій</h2>
+          <label class="check"><input type="checkbox" id="history-mine"> Лише мої</label>
+        </header>
+        <p class="note" id="history-meta">Завантажуємо історію…</p>
+        <div class="table-wrap">
+          <table class="history">
+            <thead><tr><th>Час</th><th>Операція</th><th>Кампанія</th><th>Учасник</th><th>Сума</th><th>Транзакція</th></tr></thead>
+            <tbody id="history-body"></tbody>
+          </table>
+        </div>
       </section>
     </div>
   </main>
